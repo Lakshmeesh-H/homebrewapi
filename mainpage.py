@@ -34,7 +34,7 @@ for package in packages_json:
 
     results.append(data)
 
-    time.sleep(r.elapsed.total_seconds())
+    # time.sleep(r.elapsed.total_seconds())
 
     print(f'Got {package_name} in total of {r.elapsed.total_seconds()} second(s)')
 
