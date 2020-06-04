@@ -1,8 +1,13 @@
 import requests
 import json
+import time 
 
 r = requests.get('https://formulae.brew.sh/api/formula.json')
 packages_json = r.json()
+
+results = []
+
+t1 = time.perf_counter()
 
 for package in packages_json:
     package_name = package['name']
@@ -17,4 +22,25 @@ for package in packages_json:
     installs_90 = package_json['analytics']['install_on_request']['90d'][package_name]
     installs_365 = package_json['analytics']['install_on_request']['365d'][package_name]
 
-    print(package_name, package_desc, installs_30, installs_90, installs_365)
+    data = {
+        'name': package_name,
+        'desc': package_desc,
+        'analytics': {
+            '30d': installs_30,
+            '90d': installs_90,
+            '365d': installs_365
+        }
+    }
+
+    results.append(data)
+
+    time.sleep(r.elapsed.total_seconds())
+
+    print(f'Got {package_name} in total of {r.elapsed.total_seconds()} second(s)')
+
+t2 = time.perf_counter()
+
+print(f'finished in {t2 - t1} seconds')
+
+with open('packages_info.json', 'w') as f:
+    json.dump(results, f, indent=2)
